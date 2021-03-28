@@ -19,9 +19,16 @@ function middleware2(req, res, next) {
 const  middleware3 = (req, res, next) => {
   console.log('I am middleware #3');
 
-  const errObject = new Error('I am an error');
-  next(errObject);
+  next();
 }
+
+
+app.get('/', middleware3, (req, res, next) => {
+  res.status(200);
+  res.json({
+    greeting: 'hello'
+  })
+})
 
 // An error handling middleware, has an err object
 // avoids system crashes due to errors
@@ -33,13 +40,6 @@ function errorHandler(err, req, res, next) {
     })
   }
 }
-
-app.get('/', middleware3, (req, res, next) => {
-  res.status(200);
-  res.json({
-    greeting: 'hello'
-  })
-})
 
 // has to be put after all the code
 app.use(errorHandler);
