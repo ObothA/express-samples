@@ -23,6 +23,13 @@ const  middleware3 = (req, res, next) => {
   next(errObject);
 }
 
+app.get('/', middleware3, (req, res, next) => {
+  res.status(200);
+  res.json({
+    greeting: 'hello'
+  })
+})
+
 // An error handling middleware, has an err object
 // avoids system crashes due to errors
 function errorHandler(err, req, res, next) {
@@ -34,12 +41,6 @@ function errorHandler(err, req, res, next) {
   }
 }
 
-app.get('/', middleware3, (req, res, next) => {
-  res.status(200);
-  res.json({
-    greeting: 'hello'
-  })
-})
 
 // has to be put after all the code
 app.use(errorHandler);
