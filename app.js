@@ -1,26 +1,40 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const MongoStore  = require('connect-mongo')(session);
 
 const app = express();
 
-// adding our middlewares
-app.use(middleware1);
-app.use(middleware2);
+const dbString = 'mongodb://localhost:27017/tutorial_db';
+const dbOptions = {
+  userNewUrlParser: true,
+  useUnifiedTopology: true
+};
 
-function middleware1(req, res, next) {
-  req.customProperty = 100;
-  next();
-}
+const connection = mongoose.createConnection(dbString, dbOptions);
 
-function middleware2(req, res, next) {
-  console.log(`The custom property value is: ${req.customProperty}`);
-  req.customProperty = 600;
-  next();
-}
+app.use(express.json);
+app.use(express.urlencoded({ extended: true }));
+
+const sessionStore = new MongoStore({
+  mongooseConnection: connection,
+  collection: sessions
+});
+
+app.use(session({
+  secret: 'some secret',
+  resave: false,
+  saveUninitialized: true,
+  store: sessionStore,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 // Equals to one day
+  }
+}));
 
 app.get('/', (req, res, next) => {
   res.status(200);
   res.json({
-    value: req.customProperty
+    session: 'sessions baby'
   })
 })
 
