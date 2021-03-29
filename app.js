@@ -7,26 +7,20 @@ app.use(middleware1);
 app.use(middleware2);
 
 function middleware1(req, res, next) {
-  console.log('I am middleware #1');
+  req.customProperty = 100;
   next();
 }
 
 function middleware2(req, res, next) {
-  console.log('I am middleware #2');
+  console.log(`The custom property value is: ${req.customProperty}`);
+  req.customProperty = 600;
   next();
 }
 
-const  middleware3 = (req, res, next) => {
-  console.log('I am middleware #3');
-
-  const errObject = new Error('I am an error');
-  next(errObject);
-}
-
-app.get('/', middleware3, (req, res, next) => {
+app.get('/', (req, res, next) => {
   res.status(200);
   res.json({
-    greeting: 'hello'
+    value: req.customProperty
   })
 })
 
