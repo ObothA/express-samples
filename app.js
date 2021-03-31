@@ -1,13 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
-const MongoStore  = require('connect-mongo')(session);
+const MongoStore  = require('connect-mongo');
+// const MongoStore  = require('connect-mongo')(session);
 
 const app = express();
 
 const dbString = 'mongodb://localhost:27017/tutorial_db';
 const dbOptions = {
-  userNewUrlParser: true,
+  // userNewUrlParser: true,
   useUnifiedTopology: true
 };
 
@@ -16,10 +17,16 @@ const connection = mongoose.createConnection(dbString, dbOptions);
 app.use(express.json);
 app.use(express.urlencoded({ extended: true }));
 
-const sessionStore = new MongoStore({
-  mongooseConnection: connection,
-  collection: sessions
-});
+// const sessionStore = new MongoStore({
+//   mongooseConnection: connection,
+//   collection: 'sessions'
+// });
+
+const sessionStore = MongoStore.create({
+    mongoUrl: 'mongodb://localhost:27017/tutorial_db',
+    dbName: 'tutorial_db',
+    collectionName: 'sessions'
+})
 
 app.use(session({
   secret: 'some secret',
